@@ -22,7 +22,6 @@ import (
 	"reflect"
 	"strconv"
 	"sync"
-	"testing"
 
 	"github.com/aead/ecdh"
 	"github.com/pdfcpu/pdfcpu/pkg/api"
@@ -175,10 +174,6 @@ type publicKeyring struct {
 	wg  sync.WaitGroup
 }
 
-func TestAES(t *testing.T) {
-	aes.NewCipher([]byte(`asdgsadg`))
-}
-
 //encrypt byte encrypts byte input using cipher block
 func encryptByte(block cipher.Block, value []byte) []byte {
 	// Generate an initialization vector (IV) suitable for encryption.
@@ -300,9 +295,6 @@ func decryptFile(filename string, passphrase string) []byte {
 	data, _ := ioutil.ReadFile(filename)
 	return decrypt(data, passphrase)
 }
-
-const BUFFER_SIZE int = 4096
-const IV_SIZE int = 16
 
 func createHash(key string) string {
 	hasher := md5.New()
