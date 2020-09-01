@@ -2,7 +2,6 @@ package common
 
 import (
 	"bytes"
-	"context"
 	"crypto"
 	"crypto/aes"
 	"crypto/cipher"
@@ -252,58 +251,6 @@ func TestStringSplit(t *testing.T) {
 	log.Println(resultArr)
 }
 
-func TestStringCommands(t *testing.T) {
-	is := "data.team.user.email.trevjmoore@gmail.com"
-	tm := map[string]interface{}{
-		"start": true,
-		"params": map[string]interface{}{
-			"trigger_fields": []string{
-				"data.owner", "data.email",
-			},
-			"trigger_table_name":         "board_item",
-			"trigger_govaluate":          "",
-			"trigger_field_condition":    []string{"updated", "assigned"},
-			"test_struct":                map[string]interface{}{"int_array": []int{0, 4, 6, 2, 3, 9, 8}, "email": "trevor@infor500.com", "string_array": map[string]interface{}{"key1": "value1", "email": "trevor@raindrop.com", "key3": "value3", "bool_array": []bool{false, true, true, true}}},
-			"trigger_type":               "workflow_event",
-			"trigger_operation":          "update",
-			"trigger_parent_object_type": "contract",
-			"trigger_parent_id":          3,
-		},
-		"id":    1,
-		"type":  "trigger",
-		"label": "Contract Approval Request",
-	}
-	om, err := flatten.Flatten(tm, "", flatten.DotStyle)
-	if err != nil {
-		log.Println("flatten error")
-	}
-	log.Println(om)
-	check := strings.Contains(is, "email")
-	log.Println(check)
-	op := strings.Fields(is)
-	log.Println(op)
-	f := func(c rune) bool {
-		return !unicode.IsLetter(c) && !unicode.IsNumber(c)
-	}
-	op = strings.FieldsFunc(is, f)
-	log.Println(op)
-
-	//t
-	log.Println(is[strings.Index(is, ".email.")+7:])
-	var emArr []string
-	for u, v := range om {
-		if strings.Contains(u, "email") {
-
-			if strings.Index(u, ".email") == len(u)-6 {
-				if reflect.TypeOf(v).String() == "string" {
-					emArr = append(emArr, v.(string))
-				}
-			}
-		}
-	}
-	log.Println("emails", emArr)
-}
-
 func TestSha3(t *testing.T) {
 	buf := []byte("some data to hash")
 	// A hash needs to be 64 bytes long to have 256-bit collision resistance.
@@ -460,21 +407,4 @@ func TestEncryptCTR(t *testing.T) {
 	encrypted := encryptByte(block, []byte(value))
 	decrypted := decryptByte(block, encrypted)
 	fmt.Printf("--- %s ---", string(decrypted))
-}
-
-func TestCadence(t *testing.T) {
-	ctx := context.TODO()
-	var y common.SampleHelper
-	y.SetupServiceConfig()
-	cli, err := y.Builder.BuildCadenceClient()
-	if err != nil {
-		log.Println(err)
-	}
-	var wfID, runID, queryType, result string
-	val, err := cli.QueryWorkflow(ctx, wfID, runID, queryType)
-	if err != nil {
-		log.Println(err)
-	}
-
-	val.Get(&result)
 }
