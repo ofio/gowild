@@ -8,8 +8,10 @@ import (
 	"crypto"
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/hmac"
 	"crypto/md5"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
@@ -306,4 +308,13 @@ func createHash(key string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(key))
 	return hex.EncodeToString(hasher.Sum(nil))
+}
+
+func chkHMAC(key, message string) string {
+
+	sig := hmac.New(sha256.New, []byte(key))
+	sig.Write([]byte(message))
+
+	return hex.EncodeToString(sig.Sum(nil))
+
 }
